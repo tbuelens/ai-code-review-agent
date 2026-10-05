@@ -1,8 +1,12 @@
 # AI Code Review Agent
 
-An AI-powered multi-agent code review and refactoring system built with Python, FastAPI, and the OpenAI API.
+An AI-powered multi-agent code review and refactoring system built with Python, FastAPI, Vue.js, and the OpenAI API.
 
 The application analyzes source code, proposes an improved version, and independently reviews the proposed refactoring before returning the final result.
+
+## Demo
+
+![AI Code Review Agent interface](docs/application-demo.png)
 
 ## Overview
 
@@ -15,6 +19,16 @@ The project uses three specialized AI agents:
 A Python orchestrator coordinates the agents and can trigger a new refactoring attempt when the Reviewer rejects the first proposal.
 
 The number of retries is deliberately limited to prevent uncontrolled API calls, latency, and cost.
+
+## Application
+
+The Vue.js interface provides a developer-oriented environment where users can submit source code and inspect the complete AI workflow:
+
+- detected issues and their severity;
+- original and refactored code side by side;
+- a description of the changes;
+- the independent Reviewer's decision and feedback;
+- backend availability status and error handling.
 
 ## Architecture
 
@@ -60,6 +74,8 @@ The agents communicate through structured Pydantic models rather than unstructur
 
 ## Tech Stack
 
+### Backend
+
 - Python
 - FastAPI
 - OpenAI API
@@ -68,10 +84,35 @@ The agents communicate through structured Pydantic models rather than unstructur
 - pytest
 - unittest.mock
 
+### Frontend
+
+- Vue.js 3
+- Vite
+- JavaScript
+- HTML / CSS
+- Fetch API
+
 ## Project Structure
 
 ```text
 ai-code-review-agent/
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── AnalysisPanel.vue
+│   │   │   ├── AppHeader.vue
+│   │   │   ├── CodeEditor.vue
+│   │   │   ├── LoadingState.vue
+│   │   │   ├── RefactoringPanel.vue
+│   │   │   └── ReviewPanel.vue
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── App.vue
+│   │   ├── main.js
+│   │   └── style.css
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.js
 │
 ├── agents/
 │   ├── analyzer.py
@@ -179,6 +220,45 @@ FastAPI automatically provides interactive API documentation at:
 ```text
 http://127.0.0.1:8000/docs
 ```
+
+## Running the Frontend
+
+Open a second terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The Vue application will be available at:
+
+```text
+http://localhost:5173
+```
+
+During local development, the application therefore consists of two processes:
+
+```text
+Vue.js / Vite
+localhost:5173
+      |
+      | HTTP
+      v
+FastAPI
+localhost:8000
+      |
+      v
+Orchestrator
+      |
+      +--> Analyzer Agent
+      |
+      +--> Refactor Agent
+      |
+      +--> Reviewer Agent
+```
+
+The frontend never communicates directly with the OpenAI API. All AI operations are handled by the FastAPI backend.
 
 ## API
 
